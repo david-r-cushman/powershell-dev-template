@@ -37,7 +37,4 @@ Keep ADRs brief and outcome-focused. They should explain durable reasoning, not 
 
 ## Current Records
 
-- `0001-downstream-guidance-sync.md`: limits downstream synchronization to template-owned guidance and guardrails.
-- `0002-repo-local-agent-workflows.md`: defines skills as orchestration over deterministic scripts and review.
-- `0003-manual-github-releases.md`: keeps GitHub Release publication as an explicit post-merge action.
-- `0004-windows-powershell-development-baseline.md`: establishes Windows PowerShell 5.1 Desktop, native Windows development, and Windows-hosted CI.
+- `0001-windows-powershell-development-baseline.md`: establishes Windows PowerShell 5.1 Desktop, native Windows development, and Windows-hosted CI.

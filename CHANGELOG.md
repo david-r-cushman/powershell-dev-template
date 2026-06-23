@@ -16,7 +16,7 @@ This project uses Semantic Versioning for the template itself.
 
 - Created an independent Windows PowerShell 5.1 Desktop development template from the `pwsh-dev-template` baseline.
 - Added native Windows VS Code configuration and Windows-hosted GitHub Actions validation.
-- Added ADR 0004 documenting the Windows PowerShell development baseline decision.
+- Added ADR 0001 documenting the Windows PowerShell development baseline decision.
 
 ### Changed
 

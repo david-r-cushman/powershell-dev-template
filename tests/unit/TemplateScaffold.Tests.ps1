@@ -42,12 +42,17 @@ Describe 'Template scaffold' {
         Test-Path -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.devcontainer') | Should -BeFalse
     }
 
-    It 'documents the Windows PowerShell baseline decision' {
-        $adrPath = Join-Path -Path $script:RepoRoot -ChildPath 'docs/decisions/0004-windows-powershell-development-baseline.md'
+    It 'documents the Windows PowerShell baseline decision as the first repository ADR' {
+        $decisionsPath = Join-Path -Path $script:RepoRoot -ChildPath 'docs/decisions'
+        $numberedAdrs = @(Get-ChildItem -LiteralPath $decisionsPath -Filter '*.md' -File | Where-Object { $_.Name -match '^\d{4}-' })
+        $numberedAdrs.Count | Should -Be 1
+        $numberedAdrs[0].Name | Should -Be '0001-windows-powershell-development-baseline.md'
+
+        $adrPath = Join-Path -Path $decisionsPath -ChildPath '0001-windows-powershell-development-baseline.md'
         Test-Path -LiteralPath $adrPath -PathType Leaf | Should -BeTrue
 
         $content = Get-Content -Raw -LiteralPath $adrPath
-        $content | Should -Match '^# 0004 - Windows PowerShell Development Baseline'
+        $content | Should -Match '^# 0001 - Windows PowerShell Development Baseline'
         $content | Should -Match '## Status\s+Accepted'
         $content | Should -Match '## Context'
         $content | Should -Match '## Decision'

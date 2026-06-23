@@ -1,4 +1,4 @@
-# 0004 - Windows PowerShell Development Baseline
+# 0001 - Windows PowerShell Development Baseline
 
 ## Status
 
