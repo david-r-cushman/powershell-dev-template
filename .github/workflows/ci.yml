@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repo-checks:
+    name: Repo checks (Windows PowerShell 5.1)
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install PowerShell modules
+        shell: powershell
+        run: |
+          if ($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSVersion.Minor -ne 1) {
+              throw "Expected Windows PowerShell 5.1, found $($PSVersionTable.PSVersion)."
+          }
+          if ($PSVersionTable.PSEdition -ne 'Desktop') {
+              throw "Expected Desktop edition, found $($PSVersionTable.PSEdition)."
+          }
+          Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+          Install-Module Pester -Scope CurrentUser -Force -RequiredVersion 5.7.1
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -RequiredVersion 1.25.0
+
+      - name: Run repo checks
+        shell: powershell
+        run: |
+          ./scripts/Invoke-RepoChecks.ps1 -Verbose -IncludeTemplates -OutputPath ./artifacts
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: artifacts/TestResults.xml
+          if-no-files-found: ignore

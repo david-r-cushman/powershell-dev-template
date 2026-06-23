@@ -1,0 +1,154 @@
+# Template Evolution Notes
+
+This repository is intended to be a living baseline for new PowerShell projects rather than a permanently frozen artifact.
+
+Its purpose is to provide a consistent starting point for development environments, project structure, tooling, and workflow conventions. As those surrounding tools and practices change, the template may also need to change.
+
+## Why This Template Evolves
+
+Development templates age in several dimensions:
+
+- PowerShell and base container images change
+- tooling and extensions change
+- security assumptions change
+- linting and testing conventions mature
+- local and cloud development workflows evolve
+
+For that reason, this template is maintained as an intentionally evolving baseline rather than a one-time setup.
+
+## Stability Still Matters
+
+Ongoing maintenance does not mean the template should feel unfinished or inconsistent.
+
+The goal is to keep the template:
+
+- clear enough to understand quickly
+- stable enough to trust as a starting point
+- flexible enough to support real project work
+- maintained enough to remain relevant over time
+
+Changes to the template should improve clarity, usability, safety, or maintainability. They should not create unnecessary churn.
+
+## Design Principles For Changes
+
+Updates to this template should generally follow these principles:
+
+- keep README claims aligned with what the repository actually implements
+- prefer deliberate tradeoffs over overstated guarantees
+- optimize for practical day-to-day development use
+- preserve a clean starting point for repositories created from the template
+- separate durable guidance from temporary working notes
+- keep security boundaries explicit
+
+## Decision Records
+
+Use Architecture Decision Records under `docs/decisions/` for durable template decisions that future maintainers should understand without reconstructing pull request discussion.
+
+ADRs are for significant capabilities, workflow policies, ownership boundaries, or non-obvious tradeoffs. They are not required for routine plans, patch fixes, or release metadata updates. Pull requests remain the place for implementation plans and review discussion, and `CHANGELOG.md` remains outcome-focused.
+
+## Template Versioning
+
+This repository versions the template itself with Semantic Versioning. The version describes the reusable baseline maintained by this repository, not the version of any downstream project created from it.
+
+Use version changes to communicate the impact of template evolution:
+
+- Major versions: breaking changes to template structure, workflows, supported runtime compatibility, generated project expectations, or migration assumptions.
+- Minor versions: new template capabilities, scaffolds, workflows, tooling support, or conventions that add value without intentionally breaking existing template consumers.
+- Patch versions: corrections, documentation clarifications, policy wording updates, validation fixes, and low-risk maintenance that preserve the current template contract.
+
+Update `VERSION`, the README template-version badge, and `CHANGELOG.md` together when preparing a release. Keep unreleased maintenance notes under the `Unreleased` heading until a release version is chosen. Use `scripts/Test-TemplateVersion.ps1` to verify release metadata before opening a PR. After the release PR is merged, create an annotated `vX.Y.Z` tag on `main`, push the tag, validate tag placement, and publish a GitHub Release from that tag using the matching changelog section as the release body. Agents should use `.codex/skills/template-version-release/SKILL.md` when coordinating this workflow.
+
+## Runtime Update Workflow
+
+The source of truth for the Windows PowerShell runtime contract, CI runner, and pinned tooling versions is `eng/runtime-policy.json`. GitHub Actions, VS Code settings, module manifests, and generated Markdown must agree with that policy.
+
+Agents should use `.codex/skills/runtime-policy-update/SKILL.md` when coordinating this workflow.
+
+When the runtime, runner, or pinned tooling changes:
+
+- update `eng/runtime-policy.json` first
+- align CI, VS Code settings, and both module manifests in the same deliberate change
+- run `scripts/Update-GeneratedMarkdown.ps1` to refresh managed documentation blocks
+- run `scripts/Invoke-RepoChecks.ps1 -IncludeTemplates` under Windows PowerShell 5.1 before merging
+- leave historical version references in `CHANGELOG.md` unchanged unless a release note is being added
+- record any change to the Windows PowerShell 5.1 Desktop-only environment boundary in an ADR
+
+### Generated Markdown Blocks
+
+Some Markdown content is managed by generated block markers:
+
+```markdown
+<!-- BEGIN generated:block-name -->
+...
+<!-- END generated:block-name -->
+```
+
+Do not edit the content inside those blocks by hand. Update `eng/runtime-policy.json`, then run:
+
+```powershell
+powershell.exe -NoProfile -File ./scripts/Update-GeneratedMarkdown.ps1
+```
+
+To check whether generated blocks are current without changing files, run:
+
+```powershell
+powershell.exe -NoProfile -File ./scripts/Update-GeneratedMarkdown.ps1 -Check
+```
+
+### Version Policy Validation
+
+The repository checks validate that policy-managed values stay aligned across configuration and documentation:
+
+```powershell
+powershell.exe -NoProfile -File ./scripts/Invoke-RepoChecks.ps1 -IncludeTemplates
+```
+
+For focused troubleshooting, run the version policy check directly:
+
+```powershell
+powershell.exe -NoProfile -File ./scripts/Test-VersionPolicy.ps1
+```
+
+The validation covers the development environment, CI runner, pinned tooling, and module compatibility metadata so the Windows PowerShell 5.1 Desktop contract cannot drift silently.
+
+## What This Means For Downstream Repositories
+
+Repositories created from this template should be treated as their own projects.
+
+This template may continue to evolve after a downstream repository is created, but that does not mean every downstream repository must continuously adopt every template change. Future updates should be evaluated intentionally based on project needs.
+
+### Downstream Guidance Sync
+
+AI guidance and guardrail documentation are the default downstream sync targets because they describe how AI-assisted changes should be generated, reviewed, and validated. Keeping those files aligned helps downstream repositories inherit the current operating model without replacing project-specific implementation choices.
+
+The downstream guidance sync process is intentionally narrow. It may update:
+
+- `AGENTS.md`
+- `.github/copilot-instructions.md`
+- AI governance and operating-model documents under `docs`
+- `docs/decisions/README.md` as the ADR scaffold
+- the README template-version badge
+
+It does not update source code, tests, Pester configuration, PSScriptAnalyzer settings, GitHub Actions workflows, development-environment configuration, runtime policy, module manifests, scaffolds, or numbered project-specific ADRs. Those files become downstream-owned after repository creation.
+
+Any broader synchronization should be explicit, repo-specific, and reviewed as normal project work.
+
+## Maintenance Mindset
+
+For a quick maintainer posture check, run:
+
+```powershell
+powershell.exe -NoProfile -File ./scripts/Get-TemplateHealth.ps1
+```
+
+The health report summarizes generated Markdown, runtime policy, template version metadata, repo-local agent workflow discoverability, and Git release posture. It is a report by default, not a replacement for the full repository checks.
+
+The template should be reviewed periodically with questions such as:
+
+- does the documentation still match the implementation
+- do the container and editor configurations still reflect current intent
+- are the security assumptions still valid
+- are the default tools and conventions still useful
+- has the template become clearer or more confusing over time
+
+The goal is not to make the template perfect. The goal is to keep it owned, coherent, and useful.

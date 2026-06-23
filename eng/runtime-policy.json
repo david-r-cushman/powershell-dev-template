@@ -1,0 +1,17 @@
+{
+  "runtime": {
+    "powershellVersion": "5.1",
+    "powershellVersionLabel": "5.1",
+    "edition": "Desktop",
+    "executable": "powershell.exe",
+    "platform": "Windows"
+  },
+  "githubActions": {
+    "runnerImage": "windows-2022"
+  },
+  "tooling": {
+    "pesterVersion": "5.7.1",
+    "psScriptAnalyzerVersion": "1.25.0",
+    "psReadLineVersion": "2.4.5"
+  }
+}
