@@ -10,6 +10,8 @@ This project uses Semantic Versioning for the template itself.
 
 ### Changed
 
+- Clarified repository guidance to prefer self-explanatory code over explanatory inline comments while still requiring comment-based help for public functions and scripts and allowing targeted rationale comments for non-obvious constraints or quirks.
+
 ## 0.1.0 - 2026-06-23
 
 ### Added
