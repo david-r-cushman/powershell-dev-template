@@ -121,6 +121,25 @@ powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path 
 
 The downstream badge records guidance alignment only; it does not claim that project-owned source, tests, CI, or tooling match this template.
 
+## Prerequisites And Setup
+
+This template assumes **Windows PowerShell 5.1** running on Windows. Before installing pinned modules from the PowerShell Gallery, confirm that `PowerShellGet` 2.2.5 is available. Older inbox versions such as `1.0.0.1` may fail to find modules on the first attempt or fail to install them reliably.
+
+Check the installed `PowerShellGet` versions:
+
+```powershell
+Get-Module PowerShellGet -ListAvailable | Sort-Object Version -Descending | Select-Object Name, Version, Path
+```
+
+If version `2.2.5` is not installed yet, install it and then retry the pinned module installation commands shown earlier in this README:
+
+```powershell
+Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+Install-Module PowerShellGet -RequiredVersion 2.2.5 -Scope CurrentUser -Force
+```
+
+After installation, restart the Windows PowerShell session before installing or updating the pinned repository modules.
+
 ## Template Versioning
 
 This repository versions the reusable template baseline using Semantic Versioning. `VERSION`, the README template badge, and `CHANGELOG.md` must remain aligned. The release workflow is defined by `.codex/skills/template-version-release/SKILL.md`. Release tags use `vX.Y.Z` after the release change is merged to `main`, followed by a matching GitHub Release.
