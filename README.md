@@ -21,7 +21,7 @@ This template provides:
 - repo-local agent workflows for runtime policy, guidance sync, and releases
 - Conventional Commit and repository hygiene standards
 
-## Engineering Philosophy
+## Engineering Principles in Practice
 
 > *"Zero Margin for Error"*
 
