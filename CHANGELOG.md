@@ -4,7 +4,7 @@ All notable changes to this template are documented in this file.
 
 This project uses Semantic Versioning for the template itself.
 
-## Unreleased
+## 0.2.0 - 2026-07-09
 
 ### Added
 
@@ -13,6 +13,7 @@ This project uses Semantic Versioning for the template itself.
 - Clarified repository guidance to prefer self-explanatory code over explanatory inline comments while still requiring comment-based help for public functions and scripts and allowing targeted rationale comments for non-obvious constraints or quirks.
 - Hardened `scripts/Invoke-RepoChecks.ps1` so Pester test discovery is anchored to the repository root even when the script is launched from another working directory.
 - Added README prerequisites and setup guidance that documents the Windows PowerShell `PowerShellGet` 2.2.5 requirement for reliable PSGallery-backed module installation.
+- Adopted Pester 6.0.0 as the pinned template test framework version across the runtime policy, CI workflow, generated documentation, and Windows PowerShell 5.1 install guidance after verifying the repository checks pass under Windows PowerShell 5.1 with Pester 6.
 
 ## 0.1.0 - 2026-06-23
 

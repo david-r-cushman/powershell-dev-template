@@ -4,7 +4,7 @@
 <!-- BEGIN generated:readme-powershell-badge -->
 ![PowerShell 5.1](https://img.shields.io/badge/PowerShell-5.1-blue)
 <!-- END generated:readme-powershell-badge -->
-![Template Version](https://img.shields.io/badge/template-0.1.0-blue)
+![Template Version](https://img.shields.io/badge/template-0.2.0-blue)
 
 A repeatable Windows PowerShell development template for scripts, modules, and Windows automation projects.
 
@@ -63,7 +63,7 @@ This template intentionally does not include Dev Containers or GitHub Codespaces
 ## Tooling
 
 <!-- BEGIN generated:readme-tooling-list -->
-- **Pester 5.7.1:** For unit and integration testing
+- **Pester 6.0.0:** For unit and integration testing
 - **PSScriptAnalyzer 1.25.0:** To enforce PowerShell best practices and security rules
 - **PSReadLine 2.4.5:** Configured for a more efficient terminal experience
 <!-- END generated:readme-tooling-list -->
@@ -72,7 +72,7 @@ Install the pinned modules for the current user before running local checks:
 
 ```powershell
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
-Install-Module Pester -Scope CurrentUser -Force -RequiredVersion 5.7.1
+Install-Module Pester -Scope CurrentUser -Force -RequiredVersion 6.0.0
 Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -RequiredVersion 1.25.0
 Install-Module PSReadLine -Scope CurrentUser -Force -RequiredVersion 2.4.5
 ```

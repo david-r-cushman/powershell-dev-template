@@ -20,7 +20,7 @@ Dev Containers and GitHub Codespaces are intentionally not supported because the
 - **Runtime:** Windows PowerShell 5.1 Desktop edition on Windows
 <!-- END generated:environment-runtime-stack -->
 <!-- BEGIN generated:environment-tooling-stack -->
-- **Tooling:** Pester 5.7.1, PSScriptAnalyzer 1.25.0, and PSReadLine 2.4.5
+- **Tooling:** Pester 6.0.0, PSScriptAnalyzer 1.25.0, and PSReadLine 2.4.5
 <!-- END generated:environment-tooling-stack -->
 - **Editor:** VS Code with the PowerShell extension
 - **CI:** GitHub Actions on `windows-2022`
