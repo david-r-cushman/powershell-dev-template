@@ -21,11 +21,9 @@ This template provides:
 - repo-local agent workflows for runtime policy, guidance sync, and releases
 - Conventional Commit and repository hygiene standards
 
-Unlike a traditional project template, this repository is the engineering platform behind my Windows PowerShell 5.1 portfolio. It establishes the engineering standards, validation workflows, AI guardrails, and governance model used throughout the portfolio, while allowing downstream repositories to adopt template improvements through deliberate, project-specific validation rather than automatic synchronization.
-
 ## Portfolio Context
 
-The intent is to make the development standard visible in one place, then demonstrate that standard in downstream repositories built from this template.
+Unlike a traditional project template, this repository is the engineering platform behind my Windows PowerShell 5.1 portfolio. It establishes the engineering standards, validation workflows, AI guardrails, and governance model used throughout the portfolio, while allowing downstream repositories to adopt template improvements through deliberate, project-specific validation rather than automatic synchronization.
 
 This repo provides:
 
