@@ -4,6 +4,14 @@ All notable changes to this template are documented in this file.
 
 This project uses Semantic Versioning for the template itself.
 
+## Unreleased
+
+### Added
+
+### Changed
+
+- Added a README portfolio-context section that frames this repository as the engineering platform behind the Windows PowerShell 5.1 portfolio while keeping the supporting capability claims aligned to the current template.
+
 ## 0.2.0 - 2026-07-09
 
 ### Added
