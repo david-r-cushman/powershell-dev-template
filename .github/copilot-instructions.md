@@ -84,10 +84,15 @@ Repo-local Codex skills are stored under `.codex/skills/`. When asked to synchro
 
 When asked to update the Windows PowerShell runtime, GitHub Actions runner, or pinned PowerShell tooling, use `.codex/skills/runtime-policy-update/SKILL.md`. Treat `eng/runtime-policy.json` as the source of truth, use `scripts/Update-GeneratedMarkdown.ps1` for generated Markdown blocks, and validate with `scripts/Test-VersionPolicy.ps1`.
 
-When asked to prepare, validate, tag, publish, or clean up a template release version, use `.codex/skills/template-version-release/SKILL.md`. Keep `VERSION`, the README template-version badge, and `CHANGELOG.md` aligned, validate with `scripts/Test-TemplateVersion.ps1`, and create annotated `vX.Y.Z` tags plus GitHub Releases only after the release PR is merged to `main`.
+When asked to prepare, validate, tag, publish, or clean up a template release version, use `.codex/skills/template-version-release/SKILL.md`. Keep `VERSION`, the README template-version badge, and `CHANGELOG.md` aligned, validate with `scripts/Test-TemplateVersion.ps1`, and create lightweight `vX.Y.Z` tags plus GitHub Releases only after the release PR is merged to `main`.
 
 When adding or updating repo-local skills, add or update Pester coverage in `tests/unit/SkillScaffold.Tests.ps1` for the skill file, metadata, required references, and agent discoverability. The Codex `quick_validate.py` helper may be used as an optional authoring check, but Pester is the repository validation standard.
 
+When asked to perform ordinary repository changes, use `.codex/skills/change-delivery-workflow/SKILL.md` to coordinate sandbox escalation, non-main branches, changelog updates, release decisions, commits, pull requests, and post-merge cleanup.
+
+When asked to normalize a newly created downstream repository from this template, use `.codex/skills/downstream-repo-cleanup/SKILL.md` and operate `scripts/Initialize-DownstreamRepo.ps1` through the documented audit, diff review, validation, and commit workflow. Preserve the downstream README workflow assets and stop once the repository has moved beyond the immediate post-create window.
+
+When asked to audit or align a downstream README to the shared portfolio skeleton, use `.codex/skills/readme-alignment/SKILL.md` and operate `scripts/Invoke-ReadmeAlignment.ps1` through the documented audit, branch, validation, diff-review, and commit workflow.
 ## PowerShell Compatibility
 
 Target Windows PowerShell 5.1 Desktop unless `README.md`, `/docs`, or the task-specific template declares another version under `PowerShell Version`, `Requirements`, or `Compatibility`. For version conflicts, use this precedence: `README.md`, then `/docs`, then task-specific template. If version requirements are missing, invalid, outdated, or unsupported, provide a Windows PowerShell 5.1 Desktop-compatible fallback and document the assumption.

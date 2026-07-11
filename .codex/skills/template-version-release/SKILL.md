@@ -64,10 +64,10 @@ After the release PR is merged:
 2. Switch to `main`.
 3. Fast-forward `main` from `origin/main`.
 4. Confirm `VERSION`, README badge, and `CHANGELOG.md` match the release version.
-5. Create an annotated tag:
+5. Create a lightweight tag:
 
    ```powershell
-   git tag -a vX.Y.Z -m "Release vX.Y.Z"
+   git tag vX.Y.Z
    ```
 
 6. Push the tag:
@@ -98,9 +98,9 @@ The workflow is complete when:
 
 - `VERSION`, the README template badge, and `CHANGELOG.md` agree on the release version
 - `scripts/Test-TemplateVersion.ps1` passes before the release PR is opened or updated
-- after merge, `main` is fast-forwarded and the annotated `vX.Y.Z` tag is pushed
+- after merge, `main` is fast-forwarded and the lightweight `vX.Y.Z` tag is pushed
 - `scripts/Test-TemplateVersion.ps1 -CheckTag` passes after tagging
-- a GitHub Release exists for `vX.Y.Z` with notes derived from the matching `CHANGELOG.md` section
+- a GitHub Release exists for `vX.Y.Z` with notes derived from the matching `CHANGELOG.md` section`n- GitHub shows the pushed tag as verified and associated with the intended merged release commit
 - the merged local branch has been cleaned up after the remote branch deletion or merge is confirmed
 
 ## Stop Conditions

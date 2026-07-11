@@ -10,7 +10,19 @@ This project uses Semantic Versioning for the template itself.
 
 ### Changed
 
-- Added a README portfolio-context section that frames this repository as the engineering platform behind the Windows PowerShell 5.1 portfolio while keeping the supporting capability claims aligned to the current template.
+## 0.3.0 - 2026-07-10
+
+### Added
+
+- Added a shared downstream README skeleton for repositories created from this template.
+- Added deterministic downstream cleanup and downstream README alignment workflows, including repo-local cleanup and README-alignment skills.
+- Added ADR 0002 documenting the downstream README workflow and starter README strategy.
+- Added the change-delivery workflow skill so ordinary repository changes follow the same repeatable branch, changelog, validation, and PR discipline as the PowerShell Core template.
+
+### Changed
+
+- Expanded downstream guidance sync to deliver cleanup assets, README workflow assets, and the runtime-policy README-generation files required by those workflows.
+- Updated generated Markdown, version-policy validation, template health reporting, README guidance, and skill discoverability to treat the new downstream README workflow as a maintained template capability.
 
 ## 0.2.0 - 2026-07-09
 

@@ -45,8 +45,9 @@ Describe 'Template scaffold' {
     It 'documents the Windows PowerShell baseline decision as the first repository ADR' {
         $decisionsPath = Join-Path -Path $script:RepoRoot -ChildPath 'docs/decisions'
         $numberedAdrs = @(Get-ChildItem -LiteralPath $decisionsPath -Filter '*.md' -File | Where-Object { $_.Name -match '^\d{4}-' })
-        $numberedAdrs.Count | Should -Be 1
+        $numberedAdrs.Count | Should -Be 2
         $numberedAdrs[0].Name | Should -Be '0001-windows-powershell-development-baseline.md'
+        $numberedAdrs[1].Name | Should -Be '0002-downstream-readme-workflow.md'
 
         $adrPath = Join-Path -Path $decisionsPath -ChildPath '0001-windows-powershell-development-baseline.md'
         Test-Path -LiteralPath $adrPath -PathType Leaf | Should -BeTrue

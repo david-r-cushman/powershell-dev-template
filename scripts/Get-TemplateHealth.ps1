@@ -20,7 +20,7 @@
 param(
     [Parameter()]
     [ValidateNotNullOrEmpty()]
-    [string]$RepoRoot,
+    [string]$RepoRoot = (Resolve-Path -LiteralPath (Join-Path -Path $PSScriptRoot -ChildPath '..')).Path,
 
     [Parameter()]
     [switch]$AsJson,
@@ -31,9 +31,6 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
-    $RepoRoot = Join-Path -Path $PSScriptRoot -ChildPath '..'
-}
 $resolvedRepoRoot = (Resolve-Path -LiteralPath $RepoRoot).Path
 $items = [System.Collections.Generic.List[object]]::new()
 
@@ -198,18 +195,9 @@ function Invoke-GitText {
         [string[]]$Arguments
     )
 
-    $previousErrorActionPreference = $ErrorActionPreference
-    try {
-        $ErrorActionPreference = 'Continue'
-        $result = & git -C $resolvedRepoRoot @Arguments 2>&1
-        $exitCode = $LASTEXITCODE
-    }
-    finally {
-        $ErrorActionPreference = $previousErrorActionPreference
-    }
-
+    $result = & git -C $resolvedRepoRoot @Arguments 2>&1
     return [pscustomobject]@{
-        ExitCode = $exitCode
+        ExitCode = $LASTEXITCODE
         Text = ($result | Out-String).Trim()
     }
 }
@@ -220,7 +208,10 @@ Invoke-TemplateHealthScript -Area 'Template Version' -Name 'Template version met
 
 $agentArea = 'Agent Workflows'
 $agentFiles = @(
+    @{ Name = 'Change delivery workflow skill'; Path = '.codex/skills/change-delivery-workflow/SKILL.md' },
+    @{ Name = 'Downstream repo cleanup skill'; Path = '.codex/skills/downstream-repo-cleanup/SKILL.md' },
     @{ Name = 'Downstream guidance sync skill'; Path = '.codex/skills/downstream-guidance-sync/SKILL.md' },
+    @{ Name = 'README alignment skill'; Path = '.codex/skills/readme-alignment/SKILL.md' },
     @{ Name = 'Runtime policy update skill'; Path = '.codex/skills/runtime-policy-update/SKILL.md' },
     @{ Name = 'Template version release skill'; Path = '.codex/skills/template-version-release/SKILL.md' },
     @{ Name = 'Agent workflow documentation'; Path = 'docs/agent-workflows.md' }
@@ -233,8 +224,14 @@ foreach ($agentFile in $agentFiles) {
 $agentReferences = @(
     @{ Name = 'README workflow pointer'; Path = 'README.md'; Text = 'docs/agent-workflows.md' },
     @{ Name = 'Workflow health pointer'; Path = 'docs/agent-workflows.md'; Text = 'scripts/Get-TemplateHealth.ps1' },
+    @{ Name = 'Change delivery skill reference'; Path = 'docs/agent-workflows.md'; Text = '.codex/skills/change-delivery-workflow/SKILL.md' },
+    @{ Name = 'Cleanup skill reference'; Path = 'docs/agent-workflows.md'; Text = '.codex/skills/downstream-repo-cleanup/SKILL.md' },
+    @{ Name = 'Cleanup script reference'; Path = 'docs/agent-workflows.md'; Text = 'scripts/Initialize-DownstreamRepo.ps1' },
     @{ Name = 'Downstream skill reference'; Path = 'docs/agent-workflows.md'; Text = '.codex/skills/downstream-guidance-sync/SKILL.md' },
     @{ Name = 'Downstream sync script reference'; Path = 'docs/agent-workflows.md'; Text = 'scripts/Invoke-TemplateGuidanceSync.ps1' },
+    @{ Name = 'README alignment skill reference'; Path = 'docs/agent-workflows.md'; Text = '.codex/skills/readme-alignment/SKILL.md' },
+    @{ Name = 'README alignment script reference'; Path = 'docs/agent-workflows.md'; Text = 'scripts/Invoke-ReadmeAlignment.ps1' },
+    @{ Name = 'README skeleton reference'; Path = 'docs/agent-workflows.md'; Text = 'templates/downstream/README.md' },
     @{ Name = 'Runtime skill reference'; Path = 'docs/agent-workflows.md'; Text = '.codex/skills/runtime-policy-update/SKILL.md' },
     @{ Name = 'Runtime policy reference'; Path = 'docs/agent-workflows.md'; Text = 'eng/runtime-policy.json' },
     @{ Name = 'Release skill reference'; Path = 'docs/agent-workflows.md'; Text = '.codex/skills/template-version-release/SKILL.md' },

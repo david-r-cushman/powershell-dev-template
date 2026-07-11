@@ -1,21 +1,23 @@
 ---
 name: downstream-guidance-sync
-description: Use when asked to sync, audit, update, or align AI guidance from powershell-dev-template into a downstream repository created from the template. Guides agents to operate scripts/Invoke-TemplateGuidanceSync.ps1 safely with audit-first behavior, non-main branches, diff review, validation, commits, and pull requests.
+description: Use when asked to sync, audit, update, or align AI guidance and downstream cleanup workflow assets from powershell-dev-template into a downstream repository created from the template. Guides agents to operate scripts/Invoke-TemplateGuidanceSync.ps1 safely with audit-first behavior, non-main branches, diff review, validation, commits, and pull requests.
 ---
 
 # Downstream Guidance Sync
 
 ## Overview
 
-Use this skill to synchronize template-owned AI guidance and ADR scaffolding from `powershell-dev-template` into a downstream repository. The deterministic tool is `scripts/Invoke-TemplateGuidanceSync.ps1`; this skill defines how an agent should operate that tool safely.
+Use this skill to synchronize template-owned downstream guidance, workflow documentation, and cleanup workflow assets from `powershell-dev-template` into an existing downstream repository. The deterministic tool is `scripts/Invoke-TemplateGuidanceSync.ps1`; this skill defines how an agent should operate that tool safely.
 
-The sync scope is intentionally narrow. Do not manually copy, edit, or invent files outside the script allowlist.
+This workflow does not perform cleanup itself. For newly created downstream repositories, cleanup still runs locally from the downstream repo through `scripts/Initialize-DownstreamRepo.ps1`.
+
+The sync scope is intentionally narrow and migration-oriented. Do not manually copy, edit, or invent files outside the script allowlist.
 
 ## Why This Exists
 
 Repositories created from this template become independent projects after creation. Their source, tests, CI, analyzer settings, runtime policy, and scaffolds are project-owned and should not be clobbered by template updates.
 
-AI guidance is the default sync target because it governs how AI-assisted work is produced, reviewed, and validated. The ADR scaffold README is also safe to sync because it provides a documentation convention without overwriting project-specific decisions. Keeping these files aligned helps downstream repositories inherit the current operating model without overwriting implementation choices.
+AI guidance is the default sync target because it governs how AI-assisted work is produced, reviewed, and validated. The ADR scaffold README is also safe to sync because it provides a documentation convention without overwriting project-specific decisions. For downstream repositories that predate the cleanup workflow, the sync process can also deliver the cleanup script, cleanup skill, shared downstream README skeleton, README alignment workflow assets, and the runtime-policy README-generation assets that keep that README workflow functional.
 
 ## Required Context
 
@@ -23,6 +25,7 @@ Before acting, identify:
 
 - the template repo path, normally the current `powershell-dev-template` checkout
 - the downstream repo path supplied by the user
+- whether the downstream repo already contains the cleanup workflow assets
 - whether the user wants audit-only output or a branch/PR workflow
 
 If the downstream repo path is missing, ask for it. Do not guess from nearby folders.
@@ -32,7 +35,7 @@ If the downstream repo path is missing, ask for it. Do not guess from nearby fol
 Run audit mode first from the template repo:
 
 ```powershell
-powershell.exe -NoProfile -File ./scripts/Invoke-TemplateGuidanceSync.ps1 -Path ../downstream-repo
+powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path ..\downstream-repo
 ```
 
 Use audit output to determine whether drift exists. Report `Current`, `Outdated`, `Missing`, or `Malformed` statuses in plain language. Do not apply changes during audit mode.
@@ -40,8 +43,10 @@ Use audit output to determine whether drift exists. Report `Current`, `Outdated`
 For automation-friendly inspection, use:
 
 ```powershell
-powershell.exe -NoProfile -File ./scripts/Invoke-TemplateGuidanceSync.ps1 -Path ../downstream-repo -OutputFormat Json
+powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path ..\downstream-repo -OutputFormat Json
 ```
+
+If the downstream repo is missing `scripts/Initialize-DownstreamRepo.ps1` or `.codex/skills/downstream-repo-cleanup/`, treat that as a signal that the repo predates the cleanup workflow and should receive those assets through sync before cleanup is run locally.
 
 ## Apply Workflow
 
@@ -51,24 +56,25 @@ When the user requests sync changes, use this sequence:
 2. Create or switch to a non-main branch in the downstream repo, for example:
 
    ```powershell
-   git -C ../downstream-repo switch -c chore/sync-template-guidance-0.7.0
+   git -C ../downstream-repo switch -c chore/sync-template-guidance
    ```
 
 3. Run the sync script from the template repo:
 
    ```powershell
-   powershell.exe -NoProfile -File ./scripts/Invoke-TemplateGuidanceSync.ps1 -Path ../downstream-repo -Apply
+   powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path ..\downstream-repo -Apply
    ```
 
-4. Inspect the downstream diff and verify changes are limited to AI guidance files, `docs/decisions/README.md`, and the README template badge.
-5. Run downstream validation if the repo provides a clear validation entrypoint, such as `scripts/Invoke-RepoChecks.ps1`.
-6. Commit with a conventional docs message, for example:
+4. Inspect the downstream diff and verify changes are limited to synced guidance files, the ADR scaffold README, the README template badge, and the cleanup or README workflow assets shipped from the template.
+5. If the sync delivered `scripts/Initialize-DownstreamRepo.ps1`, the cleanup skill, or the shared README workflow assets into an older downstream repo, switch into the downstream repo and run cleanup or README alignment there before adding more project-specific changes.
+6. Run downstream validation if the repo provides a clear validation entrypoint, such as `scripts/Invoke-RepoChecks.ps1`.
+7. Commit with a conventional docs or chore message that reflects the actual change, for example:
 
    ```text
-   docs(ai): sync template guidance to 0.7.0
+   chore(repo): sync template guidance and cleanup assets
    ```
 
-7. Open or draft a PR when requested, summarizing changed guidance and validation results.
+8. Open or draft a PR when requested, summarizing changed guidance, delivered cleanup assets, and validation results.
 
 ## Success Criteria
 
@@ -78,7 +84,7 @@ The workflow is complete when:
 - apply mode, when used, ran only from a non-main downstream branch
 - the downstream diff is limited to the sync allowlist, including only the ADR scaffold README under `docs/decisions/`
 - downstream validation was run, or a clear reason was reported when validation was unavailable or skipped
-- the commit or PR summary states the synced template guidance version and validation result
+- the commit or PR summary states whether the change was a guidance refresh, a cleanup-asset delivery, a README-workflow delivery, or a combination of those, along with the validation result
 
 ## Stop Conditions
 
@@ -99,12 +105,20 @@ The script may update only:
 
 - `AGENTS.md`
 - `.github/copilot-instructions.md`
+- `.codex/skills/downstream-repo-cleanup/`
+- `.codex/skills/readme-alignment/`
 - selected AI governance and operating-model docs under `docs`
+- `docs/agent-workflows.md`
 - `docs/decisions/README.md`
+- `scripts/Initialize-DownstreamRepo.ps1`
+- `scripts/Invoke-ReadmeAlignment.ps1`
+- `scripts/Update-GeneratedMarkdown.ps1`
+- `eng/runtime-policy.json`
+- `templates/downstream/README.md`
 - the README template-version badge
 
-It must not update downstream source, tests, Pester configuration, PSScriptAnalyzer settings, CI workflows, development-environment configuration, runtime policy, module manifests, scaffolds, or numbered project-specific ADRs.
+It must not update downstream source, tests, Pester configuration, PSScriptAnalyzer settings, CI workflows, development-environment configuration, module manifests, scaffolds other than the cleanup and README workflow assets, or numbered project-specific ADRs. The one runtime-policy exception is the narrow set of README-generation assets required by the shared downstream README workflow. It also does not perform cleanup or README alignment itself; it only delivers the assets needed for those workflows to run locally in downstream repositories.
 
 ## Agent Role
 
-Treat the script as the source of truth for deterministic behavior. The agent role is to orchestrate: run the script, interpret output, inspect diffs, run validation, prepare commits, and draft PR text.
+Treat the script as the source of truth for deterministic behavior. The agent role is to orchestrate: run the script, interpret output, inspect diffs, identify whether cleanup assets were delivered, run validation, prepare commits, and draft PR text.

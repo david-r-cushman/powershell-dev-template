@@ -4,7 +4,7 @@
 <!-- BEGIN generated:readme-powershell-badge -->
 ![PowerShell 5.1](https://img.shields.io/badge/PowerShell-5.1-blue)
 <!-- END generated:readme-powershell-badge -->
-![Template Version](https://img.shields.io/badge/template-0.2.0-blue)
+![Template Version](https://img.shields.io/badge/template-0.3.0-blue)
 
 A repeatable Windows PowerShell development template for building scripts, modules, and automation projects.
 
@@ -17,8 +17,8 @@ This template provides a standardized starting point for PowerShell development 
 - GitHub Actions CI on Windows
 - reusable script, function, module, and test scaffolds
 - AI governance and GitHub Copilot guidance
-- downstream AI guidance synchronization
-- repo-local agent workflows for change delivery, guidance sync, runtime policy updates, and template release management
+- downstream AI guidance synchronization and starter README workflow delivery
+- repo-local agent workflows for change delivery, downstream cleanup, guidance sync, README alignment, runtime policy updates, and template release management
 - Conventional Commit and repository hygiene standards
 
 Designed for engineers who want a consistent, AI-assisted PowerShell development workflow with validation and review guardrails. This repository also serves as the baseline template for my Windows PowerShell 5.1 portfolio projects, where downstream repositories demonstrate these standards applied to real Windows automation work.
@@ -61,13 +61,19 @@ That same philosophy also shapes how AI assistance is used in this template and 
 
 1. Create a new repository from this template.
 2. Open the repository locally in VS Code on Windows.
-3. Confirm the PowerShell extension is using **Windows PowerShell** before adding project-specific docs, tests, ADRs, or CI changes.
-4. Replace placeholder module metadata if the project is module-oriented.
-5. Add scripts, functions, modules, or automation under `src`.
-6. Add project-specific Pester tests under `tests`.
-7. Copy and adapt scaffolds from `templates` for new functions, scripts, modules, and tests when they fit the work.
-8. Review the AI-assisted development guidance in `AGENTS.md` and `.github/copilot-instructions.md` before using AI-generated changes.
-9. Run local validation:
+3. Run the downstream cleanup workflow immediately, before adding project-specific docs, tests, ADRs, or CI changes:
+
+   ```powershell
+   powershell.exe -NoProfile -File .\scripts\Initialize-DownstreamRepo.ps1 -Apply -RepositoryName <your-repo-name>
+   ```
+
+4. Confirm the PowerShell extension is using **Windows PowerShell** for ongoing local work.
+5. Replace placeholder module metadata if the project is module-oriented.
+6. Add scripts, functions, modules, or automation under `src`.
+7. Add project-specific Pester tests under `tests`.
+8. Copy and adapt scaffolds from `templates` for new functions, scripts, modules, and tests when they fit the work.
+9. Review the AI-assisted development guidance in `AGENTS.md` and `.github/copilot-instructions.md` before using AI-generated changes.
+10. Run local validation:
 
    ```powershell
    powershell.exe -NoProfile -File .\scripts\Invoke-RepoChecks.ps1 -IncludeTemplates
@@ -114,6 +120,10 @@ This repository includes the environment, conventions, and approved templates us
 
 Core repository structure:
 
+- 	emplates/downstream/README.md: shared downstream README skeleton used by cleanup and later README alignment
+- scripts/Initialize-DownstreamRepo.ps1: deterministic first-run downstream cleanup
+- scripts/Invoke-ReadmeAlignment.ps1: downstream README audit and alignment entrypoint
+
 - `src/`: project source and optional module scaffold
 - `tests/`: Pester tests for the template itself and downstream project tests after repository creation
 - `templates/`: approved function, script, module, pattern, and test scaffolds
@@ -157,13 +167,15 @@ Validation and maintenance also rely on:
 - [`docs/template-evolution.md`](docs/template-evolution.md)
 - [`docs/agent-workflows.md`](docs/agent-workflows.md)
 
-This template includes repo-local agent workflows for repeatable maintenance. Guidance sync, runtime policy updates, and template release work are documented under `.codex/skills/` and indexed in [`docs/agent-workflows.md`](docs/agent-workflows.md).
+This template includes repo-local agent workflows for repeatable maintenance. Change delivery, downstream cleanup, guidance sync, README alignment, runtime policy updates, and template release work are documented under `.codex/skills/` and indexed in [`docs/agent-workflows.md`](docs/agent-workflows.md).
+
+For ordinary repository changes, use .codex/skills/change-delivery-workflow/SKILL.md. For new downstream repo cleanup, use .codex/skills/downstream-repo-cleanup/SKILL.md. For later downstream README alignment, use .codex/skills/readme-alignment/SKILL.md.
 
 ## Downstream Guidance Sync
 
-This template includes a local sync tool for repositories created from it. The sync can refresh AI guidance, guardrail documentation, the ADR scaffold README, and the README template-version badge so downstream repositories can stay aligned with template-owned guidance after project-specific work has begun.
+This template includes a local sync tool for repositories created from it. The sync can refresh AI guidance, guardrail documentation, the ADR scaffold README, the README template version badge, the shared downstream README skeleton, the cleanup workflow assets, the README alignment workflow assets, and the runtime-policy README-generation assets those README workflows require.
 
-The sync does not update project-owned source, tests, PSScriptAnalyzer settings, Pester configuration, CI workflows, runtime policy, or project-specific ADRs.
+The sync does not update project-owned source, tests, PSScriptAnalyzer settings, Pester configuration, CI workflows, or project-specific ADRs. It delivers runtime-policy README-generation assets only because the shared downstream README workflow depends on them, and it still does not automatically rewrite an existing downstream README.
 
 A repo-local Codex skill is also provided at `.codex/skills/downstream-guidance-sync/SKILL.md` so agents can operate the sync script through the intended audit, branch, validation, commit, and pull request workflow.
 
@@ -176,7 +188,7 @@ powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path 
 Audit mode is the default and reports drift without changing files. To apply the safe sync set, create or switch the downstream repo to a non-main branch first, then run:
 
 ```powershell
-git -C ..\downstream-repo switch -c chore/sync-template-guidance-0.1.0
+git -C ..\downstream-repo switch -c chore/sync-template-guidance-0.3.0
 powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path ..\downstream-repo -Apply
 ```
 
