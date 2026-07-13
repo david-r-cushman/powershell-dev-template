@@ -10,6 +10,8 @@ This project uses Semantic Versioning for the template itself.
 
 ### Changed
 
+- Clarified the README opening positioning so the template reads as both a practical PowerShell foundation and a documented exploration of effective PowerShell engineering.
+
 ## 0.3.0 - 2026-07-10
 
 ### Added
