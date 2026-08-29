@@ -46,7 +46,9 @@ Downstream portfolio repositories provide the project-specific implementation an
 
 ## Engineering Principles in Practice
 
-> *"Zero Margin for Error"*
+> *"Respect for Consequences"*
+
+This template reflects an engineering mindset shaped by the understanding that changes have consequences. Good engineering does not assume that failure can always be prevented. It seeks to make behavior predictable, reduce unnecessary risk, detect failure, and provide a practical path to recovery.
 
 <!-- BEGIN generated:readme-runtime-philosophy -->
 - **Deterministic Runtime:** Development and validation use Windows PowerShell 5.1 Desktop edition, with CI pinned to windows-2022
