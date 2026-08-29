@@ -31,13 +31,14 @@ If a requested version or compatibility decision is unclear, inspect the current
 
 Use this order:
 
-1. Update `eng/runtime-policy.json` first.
+1. Confirm a clean working tree and usable upstream, fetch and prune `origin`, and verify the branch contains `origin/main`. Stop without editing, pulling, rebasing, or merging if the freshness preflight fails.
+2. Update `eng/runtime-policy.json` first.
 2. Align policy-managed configuration:
    - `.github/workflows/ci.yml`
    - `.vscode/settings.json`
    - `src/TemplateModule.psd1`
    - `templates/module/ModuleName/ModuleName.psd1`
-3. Update generated Markdown:
+4. Update generated Markdown:
 
    ```powershell
    powershell.exe -NoProfile -File .\scripts\Update-GeneratedMarkdown.ps1

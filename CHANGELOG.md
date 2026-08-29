@@ -10,7 +10,18 @@ This project uses Semantic Versioning for the template itself.
 
 ### Changed
 
-- Clarified the README opening positioning so the template reads as both a practical PowerShell foundation and a documented exploration of effective PowerShell engineering.
+## 0.4.0 - 2026-08-29
+
+### Added
+
+- Added layered task-scoped AI guidance, including Markdown and Windows PowerShell 5.1 path rules and three discoverable PowerShell skills.
+- Added mandatory remote-freshness preflight checks to mutable template and downstream workflows.
+- Added ADR 0003 documenting the task-scoped guidance and freshness policy.
+
+### Changed
+
+- Updated downstream guidance sync and cleanup to deliver and retain the new guidance baseline.
+- Updated workflow tests, documentation, and release guidance for the layered model.
 
 ## 0.3.0 - 2026-07-10
 

@@ -34,7 +34,7 @@ If the repo does not provide a clear versioning contract, default to a `CHANGELO
 
 Use this sequence before editing:
 
-1. Read the repository guidance and inspect the working tree.
+1. Read the repository guidance, inspect the working tree, fetch and prune `origin`, require a usable upstream, and confirm the branch contains `origin/main`. Stop without editing, pulling, rebasing, or merging if any freshness check fails.
 2. If the current branch is `main` or `master`, create and switch to a working branch before making changes.
 3. Review the relevant implementation, tests, docs, and existing validators before choosing the smallest safe change.
 4. Decide whether the repo already defines a release workflow that should be respected for this change.

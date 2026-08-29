@@ -57,10 +57,15 @@ Repository-specific extra section.
             }
 
             & git -C $Path init -q -b work/readme | Out-Null
+            & git -C $Path config core.autocrlf false | Out-Null
             & git -C $Path config user.email 'test@example.invalid' | Out-Null
             & git -C $Path config user.name 'Test User' | Out-Null
             & git -C $Path add . | Out-Null
             & git -C $Path commit -m 'initial repo' | Out-Null
+            & git -C $Path branch main | Out-Null
+            & git -C $Path remote add origin $Path | Out-Null
+            & git -C $Path fetch --quiet origin | Out-Null
+            & git -C $Path branch --set-upstream-to=origin/work/readme work/readme | Out-Null
         }
 
         function Invoke-AlignmentScript {

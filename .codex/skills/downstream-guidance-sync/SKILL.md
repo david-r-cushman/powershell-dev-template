@@ -52,7 +52,7 @@ If the downstream repo is missing `scripts/Initialize-DownstreamRepo.ps1` or `.c
 
 When the user requests sync changes, use this sequence:
 
-1. Confirm the downstream repo has a clean working tree.
+1. Confirm both the template and downstream repositories have clean working trees, usable upstreams, and branches containing `origin/main`; fetch and prune each `origin`. Stop without applying, pulling, rebasing, or merging if any check fails.
 2. Create or switch to a non-main branch in the downstream repo, for example:
 
    ```powershell

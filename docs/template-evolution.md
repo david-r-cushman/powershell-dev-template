@@ -46,6 +46,10 @@ Use Architecture Decision Records under `docs/decisions/` for durable template d
 
 ADRs are for significant capabilities, workflow policies, ownership boundaries, or non-obvious tradeoffs. They are not required for routine plans, patch fixes, or release metadata updates. Pull requests remain the place for implementation plans and review discussion, and `CHANGELOG.md` remains outcome-focused.
 
+## AI Guidance Model
+
+AI guidance is intentionally layered. `AGENTS.md` provides cross-agent governance and the freshness preflight; Copilot instructions contain concise always-on rules; path-specific instruction files apply by file type; and Codex skills carry detailed, task-scoped PowerShell and workflow guidance. This keeps Windows PowerShell 5.1 compatibility requirements available where needed without burdening unrelated work.
+
 ## Template Versioning
 
 This repository versions the template itself with Semantic Versioning. The version describes the reusable baseline maintained by this repository, not the version of any downstream project created from it.

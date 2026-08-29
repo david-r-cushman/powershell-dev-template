@@ -52,7 +52,7 @@ powershell.exe -NoProfile -File .\scripts\Invoke-ReadmeAlignment.ps1 -OutputForm
 
 When the user requests alignment changes, use this sequence:
 
-1. Confirm the repo is a supported downstream repository.
+1. Confirm the repo is a supported downstream repository with a clean working tree and usable upstream, then fetch and prune `origin` and confirm it contains `origin/main`. Stop without applying, pulling, rebasing, or merging if the freshness preflight fails.
 2. Create or switch to a non-main branch before applying changes.
 3. Run the alignment script:
 
