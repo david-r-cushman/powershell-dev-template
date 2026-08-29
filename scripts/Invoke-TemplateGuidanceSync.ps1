@@ -23,10 +23,6 @@
     Applies safe guidance synchronization changes. Without this switch, the
     script reports drift without changing files.
 
-.PARAMETER AllowDirty
-    Allows applying changes when the downstream repository already has
-    uncommitted changes.
-
 .PARAMETER FailOnDrift
     Returns a nonzero exit code when drift is detected.
 
@@ -48,9 +44,6 @@ param(
     [switch]$Apply,
 
     [Parameter()]
-    [switch]$AllowDirty,
-
-    [Parameter()]
     [switch]$FailOnDrift,
 
     [Parameter()]
@@ -67,6 +60,14 @@ if ([string]::IsNullOrWhiteSpace($TemplatePath)) {
 $guidanceFiles = @(
     'AGENTS.md'
     '.github/copilot-instructions.md'
+    '.github/instructions/markdown.instructions.md'
+    '.github/instructions/powershell.instructions.md'
+    '.codex/skills/powershell-authoring/SKILL.md'
+    '.codex/skills/powershell-authoring/agents/openai.yaml'
+    '.codex/skills/powershell-testing-review/SKILL.md'
+    '.codex/skills/powershell-testing-review/agents/openai.yaml'
+    '.codex/skills/powershell-external-services/SKILL.md'
+    '.codex/skills/powershell-external-services/agents/openai.yaml'
     '.codex/skills/change-delivery-workflow/SKILL.md'
     '.codex/skills/change-delivery-workflow/agents/openai.yaml'
     '.codex/skills/downstream-repo-cleanup/SKILL.md'
@@ -132,6 +133,7 @@ function Invoke-Git {
 
 function Test-GitRepository {
     [CmdletBinding()]
+    [OutputType([bool])]
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -146,6 +148,24 @@ function Test-GitRepository {
     }
 
     return (($isWorkTree | Select-Object -First 1) -eq 'true')
+}
+
+function Assert-RemoteFreshness {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$RepoPath)
+    if (@(& git -C $RepoPath status --porcelain).Count -gt 0) { throw ('Refusing to apply changes because uncommitted changes exist: {0}' -f $RepoPath) }
+    $origin = & git -C $RepoPath remote get-url origin 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($origin)) { throw ('Refusing to apply changes because origin is not configured: {0}' -f $RepoPath) }
+    & git -C $RepoPath fetch --quiet --prune origin
+    if ($LASTEXITCODE -ne 0) { throw ('Refusing to apply changes because origin cannot be fetched: {0}' -f $RepoPath) }
+    $upstream = & git -C $RepoPath rev-parse --abbrev-ref '@{upstream}' 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($upstream)) { throw ('Refusing to apply changes because the current branch has no upstream: {0}' -f $RepoPath) }
+    $counts = @((& git -C $RepoPath rev-list --left-right --count HEAD...$upstream) -split '\s+')
+    if ($LASTEXITCODE -ne 0 -or $counts.Count -ne 2) { throw ('Refusing to apply changes because upstream freshness cannot be determined: {0}' -f $RepoPath) }
+    if ([int]$counts[0] -gt 0 -and [int]$counts[1] -gt 0) { throw ('Refusing to apply changes because the branch has diverged from its upstream: {0}' -f $RepoPath) }
+    if ([int]$counts[1] -gt 0) { throw ('Refusing to apply changes because the branch is behind its upstream: {0}' -f $RepoPath) }
+    & git -C $RepoPath merge-base --is-ancestor origin/main HEAD
+    if ($LASTEXITCODE -ne 0) { throw ('Refusing to apply changes because the branch does not contain the latest origin/main: {0}' -f $RepoPath) }
 }
 
 function Get-FileHashText {
@@ -186,6 +206,7 @@ function Get-TemplateVersion {
 
 function Get-NewLine {
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [Parameter(Mandatory)]
         [AllowEmptyString()]
@@ -365,6 +386,7 @@ function Copy-GuidanceFile {
 
 function Get-GuidanceFileState {
     [CmdletBinding()]
+    [OutputType([object[]])]
     param(
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
@@ -431,6 +453,7 @@ function Write-TextReport {
 }
 
 $resolvedTemplatePath = Resolve-DirectoryPath -LiteralPath $TemplatePath
+$templateFreshnessChecked = $false
 $templateVersion = Get-TemplateVersion -RepoPath $resolvedTemplatePath
 $results = [System.Collections.Generic.List[object]]::new()
 
@@ -446,11 +469,6 @@ foreach ($targetPathInput in $Path) {
         throw ('Could not determine current branch for target repository: {0}' -f $targetPath)
     }
 
-    $gitStatus = @(Invoke-Git -RepoPath $targetPath -Arguments @('status', '--porcelain'))
-    if ($Apply -and -not $AllowDirty -and $gitStatus.Count -gt 0) {
-        throw ('Refusing to apply changes because target repository has uncommitted changes: {0}' -f $targetPath)
-    }
-
     if ($Apply -and $branch -in @('main', 'master')) {
         $branchName = 'chore/sync-template-guidance-{0}' -f $templateVersion
         throw ('Refusing to apply changes on protected branch "{0}". Create or switch to a working branch first: git -C "{1}" switch -c {2}' -f $branch, $targetPath, $branchName)
@@ -460,6 +478,12 @@ foreach ($targetPathInput in $Path) {
     $readmeBadge = Get-ReadmeBadgeState -RepoPath $targetPath -TemplateVersion $templateVersion
 
     if ($Apply) {
+        if (-not $templateFreshnessChecked) {
+            Assert-RemoteFreshness -RepoPath $resolvedTemplatePath
+            $templateFreshnessChecked = $true
+        }
+        Assert-RemoteFreshness -RepoPath $targetPath
+
         foreach ($fileState in $fileStates | Where-Object { $_.Status -ne 'Current' }) {
             Copy-GuidanceFile -TemplateRepoPath $resolvedTemplatePath -TargetRepoPath $targetPath -RelativePath $fileState.Path
             $fileState.Applied = $true

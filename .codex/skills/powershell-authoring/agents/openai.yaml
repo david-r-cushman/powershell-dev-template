@@ -1,0 +1,3 @@
+display_name: "Windows PowerShell Authoring"
+short_description: "Author Windows PowerShell 5.1 code"
+default_prompt: "Use $powershell-authoring to implement this Windows PowerShell 5.1 change."

@@ -4,7 +4,7 @@
 <!-- BEGIN generated:readme-powershell-badge -->
 ![PowerShell 5.1](https://img.shields.io/badge/PowerShell-5.1-blue)
 <!-- END generated:readme-powershell-badge -->
-![Template Version](https://img.shields.io/badge/template-0.3.0-blue)
+![Template Version](https://img.shields.io/badge/template-0.4.0-blue)
 
 A repeatable Windows PowerShell development template for building scripts, modules, and automation projects.
 
@@ -72,7 +72,7 @@ That same philosophy also shapes how AI assistance is used in this template and 
 6. Add scripts, functions, modules, or automation under `src`.
 7. Add project-specific Pester tests under `tests`.
 8. Copy and adapt scaffolds from `templates` for new functions, scripts, modules, and tests when they fit the work.
-9. Review the AI-assisted development guidance in `AGENTS.md` and `.github/copilot-instructions.md` before using AI-generated changes.
+9. Review `AGENTS.md`, then use the always-on Copilot instructions, matching path-specific rules, and task-scoped skills before using AI-generated changes.
 10. Run local validation:
 
    ```powershell
@@ -130,7 +130,8 @@ Core repository structure:
 - `docs/`: operating model, durable decisions, and maintainer guidance
 - `scripts/Invoke-RepoChecks.ps1`: local and CI validation entrypoint
 - `eng/runtime-policy.json`: runtime, runner, and tooling source of truth
-- `.github/copilot-instructions.md`: authoritative AI coding guidance
+- `AGENTS.md`: cross-agent entrypoint and mandatory freshness gate
+- `.github/instructions/` and `.codex/skills/`: path-specific and task-scoped guidance
 
 Template starting points include:
 
@@ -188,7 +189,7 @@ powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path 
 Audit mode is the default and reports drift without changing files. To apply the safe sync set, create or switch the downstream repo to a non-main branch first, then run:
 
 ```powershell
-git -C ..\downstream-repo switch -c chore/sync-template-guidance-0.3.0
+git -C ..\downstream-repo switch -c chore/sync-template-guidance-0.4.0
 powershell.exe -NoProfile -File .\scripts\Invoke-TemplateGuidanceSync.ps1 -Path ..\downstream-repo -Apply
 ```
 

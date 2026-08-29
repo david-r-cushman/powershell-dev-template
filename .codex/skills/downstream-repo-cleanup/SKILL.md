@@ -54,7 +54,7 @@ powershell.exe -NoProfile -File .\scripts\Initialize-DownstreamRepo.ps1 -OutputF
 
 When the user requests cleanup changes, use this sequence:
 
-1. Confirm the repository is still in the immediate post-create window.
+1. Confirm the repository is still in the immediate post-create window, has a clean working tree and usable upstream, and contains the latest `origin/main` after fetching and pruning. Stop without applying, pulling, rebasing, or merging if the freshness preflight fails.
 2. Run the cleanup script with the intended project shape.
 3. Preserve or insert the README template version badge during cleanup.
 4. Inspect the diff and confirm changes are limited to template-maintainer artifact removal, inherited guidance rewrites, and project-type scaffold normalization.

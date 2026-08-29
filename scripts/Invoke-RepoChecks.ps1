@@ -71,6 +71,7 @@ if (-not $SkipAnalyzer) {
 
 if (-not $SkipTests) {
     try {
+        Import-Module Microsoft.PowerShell.Utility -ErrorAction Stop
         Import-Module Pester -RequiredVersion $runtimePolicy.tooling.pesterVersion -ErrorAction Stop
     }
     catch {

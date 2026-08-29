@@ -27,6 +27,27 @@ $policy = Get-Content -Raw -LiteralPath $resolvedPolicyPath | ConvertFrom-Json
 $checkOnly = $Check.IsPresent
 $pendingChanges = [System.Collections.Generic.List[object]]::new()
 
+function Assert-RemoteFreshness {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$RepoPath)
+
+    if (@(& git -C $RepoPath status --porcelain).Count -gt 0) { throw 'Refusing to update generated Markdown because the working tree is dirty.' }
+    $origin = & git -C $RepoPath remote get-url origin 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($origin)) { throw 'Refusing to update generated Markdown because origin is not configured.' }
+    & git -C $RepoPath fetch --quiet --prune origin
+    if ($LASTEXITCODE -ne 0) { throw 'Refusing to update generated Markdown because origin cannot be fetched.' }
+    $upstream = & git -C $RepoPath rev-parse --abbrev-ref '@{upstream}' 2>$null
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($upstream)) { throw 'Refusing to update generated Markdown because the current branch has no upstream.' }
+    $counts = @((& git -C $RepoPath rev-list --left-right --count HEAD...$upstream) -split '\s+')
+    if ($LASTEXITCODE -ne 0 -or $counts.Count -ne 2 -or [int]$counts[1] -gt 0 -or ([int]$counts[0] -gt 0 -and [int]$counts[1] -gt 0)) { throw 'Refusing to update generated Markdown because the branch is not current with its upstream.' }
+    & git -C $RepoPath merge-base --is-ancestor origin/main HEAD
+    if ($LASTEXITCODE -ne 0) { throw 'Refusing to update generated Markdown because the branch does not contain the latest origin/main.' }
+}
+
+if (-not $checkOnly -and -not $WhatIfPreference) {
+    Assert-RemoteFreshness -RepoPath $repoRoot
+}
+
 function Set-GeneratedMarkdownBlock {
     [CmdletBinding(SupportsShouldProcess)]
     param(
@@ -130,15 +151,15 @@ Set-GeneratedMarkdownBlock -RelativePath 'templates/downstream/README.md' -Block
 Set-GeneratedMarkdownBlock -RelativePath 'templates/downstream/README.md' -BlockName 'readme-runtime-philosophy' -Lines @(
     $baseRuntimeLine
 )
-Set-GeneratedMarkdownBlock -RelativePath '.github/Instructions/environment-setup.md' -BlockName 'environment-runtime-stack' -Lines @(
+Set-GeneratedMarkdownBlock -RelativePath '.github/instructions/environment-setup.md' -BlockName 'environment-runtime-stack' -Lines @(
     $runtimeLine
 )
 
-Set-GeneratedMarkdownBlock -RelativePath '.github/Instructions/environment-setup.md' -BlockName 'environment-tooling-stack' -Lines @(
+Set-GeneratedMarkdownBlock -RelativePath '.github/instructions/environment-setup.md' -BlockName 'environment-tooling-stack' -Lines @(
     $toolingLine
 )
 
-Set-GeneratedMarkdownBlock -RelativePath '.github/Instructions/environment-setup.md' -BlockName 'environment-runtime-principle' -Lines @(
+Set-GeneratedMarkdownBlock -RelativePath '.github/instructions/environment-setup.md' -BlockName 'environment-runtime-principle' -Lines @(
     $controlledRuntimeLine
 )
 

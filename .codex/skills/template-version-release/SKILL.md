@@ -29,6 +29,8 @@ Before acting, identify:
 
 If the next version or bump level is unclear, inspect the change impact and ask before editing release metadata.
 
+Before modifying release metadata, confirm a clean working tree and usable upstream, fetch and prune `origin`, and verify the branch contains `origin/main`. Stop without editing, pulling, rebasing, or merging if the freshness preflight fails.
+
 ## Pre-Merge Release Prep
 
 When preparing a release PR:
@@ -100,7 +102,8 @@ The workflow is complete when:
 - `scripts/Test-TemplateVersion.ps1` passes before the release PR is opened or updated
 - after merge, `main` is fast-forwarded and the lightweight `vX.Y.Z` tag is pushed
 - `scripts/Test-TemplateVersion.ps1 -CheckTag` passes after tagging
-- a GitHub Release exists for `vX.Y.Z` with notes derived from the matching `CHANGELOG.md` section`n- GitHub shows the pushed tag as verified and associated with the intended merged release commit
+- a GitHub Release exists for `vX.Y.Z` with notes derived from the matching `CHANGELOG.md` section
+- GitHub shows the pushed tag as verified and associated with the intended merged release commit
 - the merged local branch has been cleaned up after the remote branch deletion or merge is confirmed
 
 ## Stop Conditions

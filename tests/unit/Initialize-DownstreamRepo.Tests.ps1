@@ -22,7 +22,9 @@ Describe 'Initialize-DownstreamRepo' {
                 'AGENTS.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath 'AGENTS.md')
                 'README.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath 'README.md')
                 '.github/copilot-instructions.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.github/copilot-instructions.md')
-                '.github/Instructions/environment-setup.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.github/Instructions/environment-setup.md')
+                '.github/instructions/environment-setup.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.github/instructions/environment-setup.md')
+                '.github/instructions/markdown.instructions.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.github/instructions/markdown.instructions.md')
+                '.github/instructions/powershell.instructions.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.github/instructions/powershell.instructions.md')
                 'docs/agent-workflows.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath 'docs/agent-workflows.md')
                 'docs/decisions/README.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath 'docs/decisions/README.md')
                 'docs/template-evolution.md' = 'template evolution'
@@ -64,6 +66,12 @@ Describe 'Initialize-DownstreamRepo' {
                 '.codex/skills/runtime-policy-update/agents/openai.yaml' = 'display_name: "Runtime Policy Update"'
                 '.codex/skills/template-version-release/SKILL.md' = 'release skill'
                 '.codex/skills/template-version-release/agents/openai.yaml' = 'display_name: "Template Version Release"'
+                '.codex/skills/powershell-authoring/SKILL.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.codex/skills/powershell-authoring/SKILL.md')
+                '.codex/skills/powershell-authoring/agents/openai.yaml' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.codex/skills/powershell-authoring/agents/openai.yaml')
+                '.codex/skills/powershell-testing-review/SKILL.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.codex/skills/powershell-testing-review/SKILL.md')
+                '.codex/skills/powershell-testing-review/agents/openai.yaml' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.codex/skills/powershell-testing-review/agents/openai.yaml')
+                '.codex/skills/powershell-external-services/SKILL.md' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.codex/skills/powershell-external-services/SKILL.md')
+                '.codex/skills/powershell-external-services/agents/openai.yaml' = Get-Content -Raw -LiteralPath (Join-Path -Path $script:RepoRoot -ChildPath '.codex/skills/powershell-external-services/agents/openai.yaml')
                 'tests/unit/Invoke-TemplateGuidanceSync.Tests.ps1' = 'Describe "x" {}'
                 'tests/unit/TemplateHealth.Tests.ps1' = 'Describe "x" {}'
                 'tests/unit/TemplateScaffold.Tests.ps1' = 'Describe "x" {}'
@@ -94,10 +102,14 @@ Describe 'Initialize-DownstreamRepo' {
             }
 
             & git -C $Path init -q -b main | Out-Null
+            & git -C $Path config core.autocrlf false | Out-Null
             & git -C $Path config user.email 'test@example.invalid' | Out-Null
             & git -C $Path config user.name 'Test User' | Out-Null
             & git -C $Path add . | Out-Null
             & git -C $Path commit -m 'initial downstream template copy' | Out-Null
+            & git -C $Path remote add origin $Path | Out-Null
+            & git -C $Path fetch --quiet origin | Out-Null
+            & git -C $Path branch --set-upstream-to=origin/main main | Out-Null
         }
 
         function Invoke-CleanupScript {
@@ -212,8 +224,7 @@ Describe 'Initialize-DownstreamRepo' {
 
         $copilot = Get-Content -Raw -LiteralPath (Join-Path -Path $script:DownstreamRepo -ChildPath '.github/copilot-instructions.md')
         $copilot | Should -Match 'created from the powershell-dev-template GitHub template'
-        $copilot | Should -Match 'downstream-repo-cleanup'
-        $copilot | Should -Match 'readme-alignment'
+        $copilot | Should -Match '\.github/instructions/'
         $copilot | Should -Not -Match 'runtime-policy-update'
         $copilot | Should -Not -Match 'template-version-release'
 

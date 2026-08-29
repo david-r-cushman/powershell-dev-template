@@ -6,6 +6,10 @@ The workflows are designed around a simple rule: agents may coordinate the work,
 
 Repo-local skills live under `.codex/skills/`. They tell compatible agents how to use the repository's existing scripts, validation commands, and review expectations. They are not a substitute for reading the repository guidance, inspecting diffs, or opening reviewed pull requests.
 
+Before any mutable workflow, inspect the working tree, fetch and prune `origin`, confirm a usable upstream, and confirm the branch contains `origin/main`. Stop without pulling, rebasing, merging, or editing when that preflight fails.
+
+The guidance is layered: `AGENTS.md` contains cross-agent governance, `.github/copilot-instructions.md` contains always-on requirements, `.github/instructions/` contains path-specific rules, and `.codex/skills/` contains task-scoped detail.
+
 ## Workflow Index
 
 | Workflow | Use When | Skill | Control | Validation |

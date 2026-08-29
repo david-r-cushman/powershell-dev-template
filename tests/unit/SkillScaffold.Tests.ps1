@@ -61,7 +61,7 @@ Describe 'Repo-local skills' {
 
         $readmeContent | Should -Match '\.codex/skills/change-delivery-workflow/SKILL\.md'
         $agentsContent | Should -Match '\.codex/skills/change-delivery-workflow/SKILL\.md'
-        $copilotContent | Should -Match '\.codex/skills/change-delivery-workflow/SKILL\.md'
+        $copilotContent | Should -Match '\.github/instructions/'
         $workflowContent | Should -Match '\.codex/skills/change-delivery-workflow/SKILL\.md'
     }
     It 'includes the downstream repo cleanup skill' {
@@ -102,9 +102,8 @@ Describe 'Repo-local skills' {
         $readmeContent | Should -Match 'Initialize-DownstreamRepo\.ps1'
         $readmeContent | Should -Match 'template version badge'
         $agentsContent | Should -Match '\.codex/skills/downstream-repo-cleanup/SKILL\.md'
-        $agentsContent | Should -Match 'Initialize-DownstreamRepo\.ps1'
-        $copilotContent | Should -Match '\.codex/skills/downstream-repo-cleanup/SKILL\.md'
-        $copilotContent | Should -Match 'Initialize-DownstreamRepo\.ps1'
+        $workflowContent | Should -Match 'Initialize-DownstreamRepo\.ps1'
+        $copilotContent | Should -Match '\.github/instructions/'
         $workflowContent | Should -Match '\.codex/skills/change-delivery-workflow/SKILL\.md'
         $workflowContent | Should -Match '\.codex/skills/downstream-repo-cleanup/SKILL\.md'
         $workflowContent | Should -Match 'scripts/Initialize-DownstreamRepo\.ps1'
@@ -171,11 +170,8 @@ Describe 'Repo-local skills' {
         $copilotContent = Get-Content -Raw -LiteralPath $copilotPath
 
         $agentsContent | Should -Match '\.codex/skills/downstream-guidance-sync/SKILL\.md'
-        $agentsContent | Should -Match 'Invoke-TemplateGuidanceSync\.ps1'
-        $agentsContent | Should -Match 'Initialize-DownstreamRepo\.ps1'
-        $copilotContent | Should -Match '\.codex/skills/downstream-guidance-sync/SKILL\.md'
-        $copilotContent | Should -Match 'Invoke-TemplateGuidanceSync\.ps1'
-        $copilotContent | Should -Match 'Initialize-DownstreamRepo\.ps1'
+        (Get-Content -Raw -LiteralPath $script:AgentWorkflowsPath) | Should -Match 'Invoke-TemplateGuidanceSync\.ps1'
+        $copilotContent | Should -Match '\.github/instructions/'
     }
 
     It 'includes the README alignment skill' {
@@ -216,7 +212,7 @@ Describe 'Repo-local skills' {
 
         $readmeContent | Should -Match '\.codex/skills/readme-alignment/SKILL\.md'
         $agentsContent | Should -Match '\.codex/skills/readme-alignment/SKILL\.md'
-        $copilotContent | Should -Match '\.codex/skills/readme-alignment/SKILL\.md'
+        $copilotContent | Should -Match '\.github/instructions/'
         $workflowContent | Should -Match '\.codex/skills/readme-alignment/SKILL\.md'
         $workflowContent | Should -Match 'scripts/Invoke-ReadmeAlignment\.ps1'
         $workflowContent | Should -Match 'templates/downstream/README\.md'
@@ -267,9 +263,8 @@ Describe 'Repo-local skills' {
         $copilotContent = Get-Content -Raw -LiteralPath $copilotPath
 
         $agentsContent | Should -Match '\.codex/skills/runtime-policy-update/SKILL\.md'
-        $agentsContent | Should -Match 'eng/runtime-policy\.json'
-        $copilotContent | Should -Match '\.codex/skills/runtime-policy-update/SKILL\.md'
-        $copilotContent | Should -Match 'eng/runtime-policy\.json'
+        (Get-Content -Raw -LiteralPath $script:RuntimeSkillPath) | Should -Match 'eng/runtime-policy\.json'
+        $copilotContent | Should -Match '\.github/instructions/'
     }
 
     It 'includes the template version release skill' {
@@ -316,11 +311,11 @@ Describe 'Repo-local skills' {
         $readmeContent | Should -Match '\.codex/skills/template-version-release/SKILL\.md'
         $evolutionContent | Should -Match '\.codex/skills/template-version-release/SKILL\.md'
         $agentsContent | Should -Match '\.codex/skills/template-version-release/SKILL\.md'
-        $copilotContent | Should -Match '\.codex/skills/template-version-release/SKILL\.md'
+        $copilotContent | Should -Match '\.github/instructions/'
         $readmeContent | Should -Match 'GitHub Release'
         $evolutionContent | Should -Match 'GitHub Release'
-        $agentsContent | Should -Match 'GitHub Release'
-        $copilotContent | Should -Match 'GitHub Release'
+        $evolutionContent | Should -Match 'GitHub Release'
+        $copilotContent | Should -Match '\.github/instructions/'
     }
 
     It 'documents repo-local agent workflows for human discovery' {
@@ -434,5 +429,22 @@ Describe 'Repo-local skills' {
         $runtimeContent | Should -Match 'repeatable, reviewable'
 
         $versionContent | Should -Not -Match '## Why This Exists'
+    }
+
+    It 'includes focused Windows PowerShell guidance skills with discoverable metadata' {
+        $skills = @(
+            @{ Name = 'powershell-authoring'; Heading = 'Windows PowerShell Authoring' }
+            @{ Name = 'powershell-testing-review'; Heading = 'Windows PowerShell Testing And Review' }
+            @{ Name = 'powershell-external-services'; Heading = 'Windows PowerShell External Services' }
+        )
+
+        foreach ($skill in $skills) {
+            $skillPath = Join-Path -Path $script:RepoRoot -ChildPath ('.codex/skills/{0}/SKILL.md' -f $skill.Name)
+            $metadataPath = Join-Path -Path $script:RepoRoot -ChildPath ('.codex/skills/{0}/agents/openai.yaml' -f $skill.Name)
+            Test-Path -LiteralPath $skillPath -PathType Leaf | Should -BeTrue
+            Test-Path -LiteralPath $metadataPath -PathType Leaf | Should -BeTrue
+            (Get-Content -Raw -LiteralPath $skillPath) | Should -Match ('name: {0}' -f $skill.Name)
+            (Get-Content -Raw -LiteralPath $metadataPath) | Should -Match ('display_name: "{0}"' -f $skill.Heading)
+        }
     }
 }

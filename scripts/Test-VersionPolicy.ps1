@@ -154,7 +154,7 @@ Test-PolicyRegexValue -RelativePath '.github/workflows/ci.yml' -Pattern '^\s*Ins
 
 Test-PolicyText -RelativePath '.vscode/settings.json' -ExpectedText $policy.runtime.executable -Description 'VS Code Windows PowerShell executable'
 Test-PolicyText -RelativePath 'README.md' -ExpectedText ('Windows PowerShell {0}' -f $policy.runtime.powershellVersion) -Description 'README Windows PowerShell version'
-Test-PolicyText -RelativePath '.github/Instructions/environment-setup.md' -ExpectedText ('Windows PowerShell {0}' -f $policy.runtime.powershellVersion) -Description 'Environment setup Windows PowerShell version'
+Test-PolicyText -RelativePath '.github/instructions/environment-setup.md' -ExpectedText ('Windows PowerShell {0}' -f $policy.runtime.powershellVersion) -Description 'Environment setup Windows PowerShell version'
 Test-PolicyText -RelativePath '.github/copilot-instructions.md' -ExpectedText ('Windows PowerShell {0}' -f $policy.runtime.powershellVersionLabel) -Description 'Copilot instruction PowerShell compatibility target'
 Test-PolicyText -RelativePath 'src/TemplateModule.psd1' -ExpectedText "PowerShellVersion = '5.1'" -Description 'Template module PowerShell version'
 Test-PolicyText -RelativePath 'src/TemplateModule.psd1' -ExpectedText "CompatiblePSEditions = @('Desktop')" -Description 'Template module compatible edition'

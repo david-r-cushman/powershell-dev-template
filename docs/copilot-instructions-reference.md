@@ -8,7 +8,7 @@ The active repository-wide instructions live at:
 
 - `/.github/copilot-instructions.md`
 
-That file is the source of truth for Copilot generation and review behavior in repositories created from this template.
+That file is the Copilot-compatible always-on layer for generation and review behavior in repositories created from this template.
 
 Do not copy the full instruction text into this reference document. Keeping one canonical file reduces drift and makes the applied rules easier to audit.
 
@@ -54,7 +54,7 @@ Before changing the Copilot instructions:
 
 ## Additional Instruction Files
 
-Use `/.github/Instructions/` only for narrower guidance that should not live in the repository-wide instruction file.
+Use `/.github/instructions/` only for narrower guidance that should not live in the repository-wide instruction file. Use `.codex/skills/` for conditional, task-scoped guidance rather than making it always-on.
 
 Good candidates:
 
