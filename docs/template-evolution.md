@@ -70,16 +70,17 @@ Template releases use lightweight tags created on merged `main` commits. This ma
 
 ## Runtime Update Workflow
 
-Dependabot Docker pull requests are treated as runtime upgrade notifications, not as ordinary one-file dependency bumps.
+Dependabot GitHub Actions pull requests are dependency-update notifications that should be reviewed with the workflow changes they propose. This template has no Docker image or container dependency lifecycle.
 
-The source of truth for the current runtime, CI runner, and pinned PowerShell tooling versions is `eng/runtime-policy.json`. Files such as the Dockerfile, GitHub Actions workflow, and generated Markdown blocks should agree with that policy.
+The source of truth for the current Windows PowerShell runtime, CI runner, and pinned PowerShell tooling versions is `eng/runtime-policy.json`. The GitHub Actions workflow, VS Code settings, module manifests, and generated Markdown blocks should agree with that policy.
 
 Agents should use `.codex/skills/runtime-policy-update/SKILL.md` when coordinating this workflow.
 
-When the pinned PowerShell or Ubuntu runtime changes:
+When the Windows PowerShell runtime, CI runner, or pinned tooling changes:
 
 - update `eng/runtime-policy.json` first
-- update the Dockerfile, CI runner, and pinned tooling only as part of the same deliberate runtime change
+- update the GitHub Actions workflow, VS Code settings, module manifests, and generated Markdown only as part of the same deliberate runtime change
+- preserve the Windows PowerShell 5.1 Desktop contract unless an explicit compatibility decision changes it
 - run `scripts/Update-GeneratedMarkdown.ps1` to refresh managed documentation blocks
 - run `scripts/Invoke-RepoChecks.ps1 -IncludeTemplates` before merging
 - leave historical version references in `CHANGELOG.md` unchanged unless a release note is being added
