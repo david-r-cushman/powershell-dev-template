@@ -10,6 +10,7 @@ This project uses Semantic Versioning for the template itself.
 
 ### Changed
 
+- Corrected runtime-maintenance guidance to describe the Windows PowerShell 5.1 and GitHub Actions dependency lifecycle rather than inherited Docker and Ubuntu workflow language.
 - Reframed the README engineering-principles introduction around respect for consequences and recoverable engineering.
 
 ## 0.4.0 - 2026-08-29
